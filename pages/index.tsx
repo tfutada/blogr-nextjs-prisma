@@ -1,25 +1,20 @@
 import React from "react"
-import { GetStaticProps } from "next"
+import {GetStaticProps} from "next"
 import Layout from "../components/Layout"
-import Post, { PostProps } from "../components/Post"
-import { sql } from "@vercel/postgres";
+import Post, {PostProps} from "../components/Post"
+import {sql} from "@vercel/postgres";
 
 export const getStaticProps: GetStaticProps = async () => {
-    const { rows } = await sql`SELECT * from CARTS`;
+    const {rows} = await sql`SELECT *
+                             from CARTS`;
 
     const feed = rows.map(row => ({
         id: row.id,
-        title: row.title,
-        content: row.content,
-        published: row.published,
-        author: {
-            name: row.author_name,
-            email: row.author_email,
-        },
+        user_id: row.user_id,
     }));
 
     return {
-        props: { feed },
+        props: {feed},
         revalidate: 10
     }
 }
@@ -36,25 +31,25 @@ const Blog: React.FC<Props> = (props) => {
                 <main>
                     {props.feed.map((post) => (
                         <div key={post.id} className="post">
-                            <Post post={post} />
+                            <Post post={post}/>
                         </div>
                     ))}
                 </main>
             </div>
             <style jsx>{`
-        .post {
-          background: white;
-          transition: box-shadow 0.1s ease-in;
-        }
+              .post {
+                background: white;
+                transition: box-shadow 0.1s ease-in;
+              }
 
-        .post:hover {
-          box-shadow: 1px 1px 3px #aaa;
-        }
+              .post:hover {
+                box-shadow: 1px 1px 3px #aaa;
+              }
 
-        .post + .post {
-          margin-top: 2rem;
-        }
-      `}</style>
+              .post + .post {
+                margin-top: 2rem;
+              }
+            `}</style>
         </Layout>
     )
 }
